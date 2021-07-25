@@ -4,7 +4,7 @@ def LatitudeDecimaltoDMS(Decimal):
     s = (Decimal - d - m/60) * 3600.00
     z= round(s, 2)
     if d >= 0:
-        DMS=str(abs(d))+"º "+str(abs(m))+"'"+str(abs(z))+'"'+"N"
+        DMS=str(abs(d))+"º "+str(abs(m))+"' "+str(abs(z))+'" '+"N"
         #print('DMS-Lat',DMS)
         #print(str(abs(d))+"º "+str(abs(m))+"\'' "+str(abs(z))+'" '+"N")
     else:
@@ -20,7 +20,7 @@ def LongitudeDecimaltoDMS(Decimal):
     s = (Decimal - d - m/60) * 3600.00
     z= round(s, 2)
     if d >= 0:
-        DMS=str(abs(d))+"º "+str(abs(m))+"'"+str(abs(z))+'"'+"E"
+        DMS=str(abs(d))+"º "+str(abs(m))+"' "+str(abs(z))+'" '+"E"
         #print('DMS-Lat',DMS)
         #print(str(abs(d))+"º "+str(abs(m))+"\'' "+str(abs(z))+'" '+"E")
     else:

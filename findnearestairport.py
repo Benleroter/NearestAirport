@@ -55,17 +55,24 @@ for Airport in AirportList:
 
 NearestAirports = sorted(LDL, key=operator.itemgetter(1))
 
-NoOfResults=3
-nearestthree=[]
+nearest=[]
 count=0
-NoOfResults = int(input("number of airports to display: "))
+#NoOfResults = int(input("number of airports to display: "))
+
+print('Enter number of airports to show')
+terminal_menu = TerminalMenu(["default ", "enter number to show"])
+choice_index = terminal_menu.show()
+if choice_index==0:
+	NoOfResults=1
+elif choice_index==1:
+	NoOfResults = int(input("number of airports to display: "))
 
 for i in range(NoOfResults):
-	nearestthree.append(NearestAirports[count])
+	nearest.append(NearestAirports[count])
 	count = count+1
 
 print(NoOfResults, " nearest airports to Lat:", str(Slat1),"Lon:",str(Slon1))
 
 ColumnHeaders = ['Airport', 'Distance '+DistanceUnits, 'DD Lat', 'DD Lon', 'DMS Lat', 'DMS Lon']
-table = columnar(nearestthree, ColumnHeaders, no_borders=False)
+table = columnar(nearest, ColumnHeaders, no_borders=False)
 print(table)
