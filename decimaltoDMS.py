@@ -1,4 +1,4 @@
-
+''' two functions to convert decimal co-ordinates into degree, minute, second format'''
 
 def LatitudeDecimaltoDMS(coordinate):
     d = int(coordinate)

@@ -1,3 +1,12 @@
+'''
+Main program, calls units and functions to load data from csv file, prompts users to choose data set, 
+distance units, number of results to display. Uses the Haversine formula to calculate the arc bewtween two pionts
+on the globe. Displays latitude and longittude in both DD and DMS formats.
+
+Two datasets (csv's), one as supplied and another where I added locations around the world for test purposes. For testing 
+purposes there ar two locations hard coded, one in England and the other in Australia   
+'''
+
 import operator
 from getdatafromcsv import ExtractDataFromCSV
 from haversine import Haversine

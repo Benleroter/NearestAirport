@@ -1,6 +1,7 @@
 
 
 class DataEntryAndValidation():
+	"""Prompts user to enter co-ordinates and then validates inpiut is a float then checks values are between 180 and -180"""
 	def GetCoordinate(self, lat_or_long):	
 
 		if lat_or_long=='Lat':
