@@ -4,62 +4,42 @@ from haversine import Haversine
 from decimaltoDMS import LatitudeDecimaltoDMS, LongitudeDecimaltoDMS
 from columnar import columnar
 from simple_term_menu import TerminalMenu
+from coordinates import DataEntryAndValidation
 
 
-terminal_menu = TerminalMenu(["original csv", "modified csv for testing"])
-choice_index = terminal_menu.show()
-if choice_index==0:
+print('Choose base airport data')
+path_menu = TerminalMenu(["UK airports csv", "Worldwide airports csv for testing"])
+path_index = path_menu.show()
+if path_index==0:
 	path = '/home/ben/Development/LatLong/uk_airport_coords.csv'
 else:
-	path = '/home/ben/Development/LatLong/uk_airport_coords2.csv'
+	path = '/home/ben/Development/LatLong/world_airport_coords.csv'
 
 AirportList = ExtractDataFromCSV(path)
 
-terminal_menu = TerminalMenu(["use hard coded position test data Shaftesbury, Dorset", "use hard coded position test data Sydney, Australia","enter position"])
-choice_index = terminal_menu.show()
-if choice_index==0:
+print('Choose pre-defined position or enter co-ordinates ')
+input_menu = TerminalMenu(["test data Shaftesbury, Dorset", "test data Alice Springs, Australia","enter position"])
+input_index = input_menu.show()
+if input_index==0:
 	#Shaftesbury Lat,Long
 	Slat1=51.005840
 	Slon1=-2.197550
-elif choice_index==1:
-	#Sydney International Lat,Long
-	Slat1=-33.865143
-	Slon1=151.2099	
-elif choice_index==2:
-	while True:
-	    try:
-	        Slat1 = float(input("Current position Latitude: "))
-	    except ValueError:
-	        print("please enter in format ###.####....####")
-	        continue
- 
-	    if Slat1 > 180.00 or Slat1 <-180.00:
-	        print("max is 180 min is -180, please re-enter")
-	        continue
-	    else:
-	        #we're ready to exit the loop.
-	        break
+	print('[INFO] Co-ordinates chosen-Shaftesbury:', Slat1,", ",Slon1)	
+elif input_index==1:
+	#Alice Springs International Lat,Long
+	Slat1=-23.698042
+	Slon1=133.880753
+	print('[INFO] Co-ordinates chosen-Alice Springs:', Slat1,", ",Slon1)	
+elif input_index==2:
+	Pos=[]
+	Pos=DataEntryAndValidation() 
+	Slat1 = Pos[0]
+	Slon1 = Pos[1]
+	print('[INFO] Co-ordinates chosen:', Slat1,", ", Slon1)	
 
-	while True:
-	    try:
-	        Slon1 = float(input("Current position Longitude: "))
-	    except ValueError:
-	        print("please enter in format ###.####....####")
-	        continue
+AirportAndDistanceList=[]
 
-	    if Slon1 > 180 or Slon1 < -180:
-	        print("max is 180 min is -180, please re-enter")
-	        continue
-	    else:
-	        #we're ready to exit the loop.
-	        break
-
-	#input validation needed
-	#Slat1 = float(input("Current position Latitude: "))
-	#Slon1 = float(input("Current position Longitude: "))
-
-LDL=[]
-
+print('Choose output units')
 terminal_menu = TerminalMenu(["miles", "kilometres"])
 choice_index = terminal_menu.show()
 if choice_index==0:
@@ -67,35 +47,37 @@ if choice_index==0:
 elif choice_index==1:
 	DistanceUnits='kilometres'
 
+print('[INFO] Units chosen:', DistanceUnits )	
+
 for Airport in AirportList:
 	Slon2=float(Airport[3])
 	Slat2=float(Airport[2])
-	LD=[]
-	LD.insert(0, Airport[0])
+	AirportAndDistance=[]
+	AirportAndDistance.insert(0, Airport[0])
 	if DistanceUnits=='miles':
-		LD.insert(1,float("{:.2f}".format(Haversine([Slon1,Slat1],[Slon2,Slat2]).miles)))
+		AirportAndDistance.insert(1,float("{:.2f}".format(Haversine([Slon1,Slat1],[Slon2,Slat2]).miles)))
 	if DistanceUnits=='kilometres':
-		LD.insert(1,float("{:.2f}".format(Haversine([Slon1,Slat1],[Slon2,Slat2]).km)))
-	LD.insert(2,(Slat2))
-	LD.insert(3,(Slon2))
-	LD.insert(4,LatitudeDecimaltoDMS(Slat2))
-	LD.insert(5,LongitudeDecimaltoDMS(Slon2))
-	LDL.append(LD)
+		AirportAndDistance.insert(1,float("{:.2f}".format(Haversine([Slon1,Slat1],[Slon2,Slat2]).km)))
+	AirportAndDistance.insert(2,(Slat2))
+	AirportAndDistance.insert(3,(Slon2))
+	AirportAndDistance.insert(4,LatitudeDecimaltoDMS(Slat2))
+	AirportAndDistance.insert(5,LongitudeDecimaltoDMS(Slon2))
+	AirportAndDistanceList.append(AirportAndDistance)
 
-NearestAirports = sorted(LDL, key=operator.itemgetter(1))
-
-nearest=[]
-count=0
-#NoOfResults = int(input("number of airports to display: "))
+NearestAirports = sorted(AirportAndDistanceList, key=operator.itemgetter(1))
 
 print('Enter number of airports to show')
-terminal_menu = TerminalMenu(["default ", "enter number to show"])
+terminal_menu = TerminalMenu(["default (1)", "enter number to show", "All"])
 choice_index = terminal_menu.show()
 if choice_index==0:
 	NoOfResults=1
 elif choice_index==1:
 	NoOfResults = int(input("number of airports to display: "))
+elif choice_index==2:
+	NoOfResults=len(NearestAirports)
 
+nearest=[]
+count=0
 for i in range(NoOfResults):
 	nearest.append(NearestAirports[count])
 	count = count+1
