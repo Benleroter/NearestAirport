@@ -4,6 +4,7 @@
 #   Haversine Formula
 #   June, 2016
 #
+#   https://nathanrooy.github.io/posts/2016-09-07/haversine-with-python/
 #------------------------------------------------------------------------------+
 
 import math
