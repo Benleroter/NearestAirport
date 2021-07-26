@@ -26,8 +26,37 @@ elif choice_index==1:
 	Slat1=-33.865143
 	Slon1=151.2099	
 elif choice_index==2:
-	Slat1 = float(input("Current position Latitude: "))
-	Slon1 = float(input("Current position Longitude: "))
+	while True:
+	    try:
+	        Slat1 = float(input("Current position Latitude: "))
+	    except ValueError:
+	        print("please enter in format ###.####....####")
+	        continue
+ 
+	    if Slat1 > 180.00 or Slat1 <-180.00:
+	        print("max is 180 min is -180, please re-enter")
+	        continue
+	    else:
+	        #we're ready to exit the loop.
+	        break
+
+	while True:
+	    try:
+	        Slon1 = float(input("Current position Longitude: "))
+	    except ValueError:
+	        print("please enter in format ###.####....####")
+	        continue
+
+	    if Slon1 > 180 or Slon1 < -180:
+	        print("max is 180 min is -180, please re-enter")
+	        continue
+	    else:
+	        #we're ready to exit the loop.
+	        break
+
+	#input validation needed
+	#Slat1 = float(input("Current position Latitude: "))
+	#Slon1 = float(input("Current position Longitude: "))
 
 LDL=[]
 
