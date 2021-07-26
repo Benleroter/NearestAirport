@@ -4,7 +4,7 @@ from haversine import Haversine
 from decimaltoDMS import LatitudeDecimaltoDMS, LongitudeDecimaltoDMS
 from columnar import columnar
 from simple_term_menu import TerminalMenu
-from coordinates import DataEntryAndValidation
+from coordinate_entry import DataEntryAndValidation
 
 
 print('Choose base airport data')
@@ -15,75 +15,83 @@ if path_index==0:
 else:
 	path = '/home/ben/Development/LatLong/world_airport_coords.csv'
 
-AirportList = ExtractDataFromCSV(path)
+airport_list = ExtractDataFromCSV(path)
 
 print('Choose pre-defined position or enter co-ordinates ')
 input_menu = TerminalMenu(["test data Shaftesbury, Dorset", "test data Alice Springs, Australia","enter position"])
 input_index = input_menu.show()
 if input_index==0:
 	#Shaftesbury Lat,Long
-	Slat1=51.005840
-	Slon1=-2.197550
-	print('[INFO] Co-ordinates chosen-Shaftesbury:', Slat1,", ",Slon1)	
+	latitude1 = 51.005840
+	longitude1 = -2.197550
+	print('[INFO] Co-ordinates chosen-Shaftesbury:', latitude1,", ",longitude1)	
+
 elif input_index==1:
 	#Alice Springs International Lat,Long
-	Slat1=-23.698042
-	Slon1=133.880753
-	print('[INFO] Co-ordinates chosen-Alice Springs:', Slat1,", ",Slon1)	
-elif input_index==2:
-	Pos=[]
-	Pos=DataEntryAndValidation() 
-	Slat1 = Pos[0]
-	Slon1 = Pos[1]
-	print('[INFO] Co-ordinates chosen:', Slat1,", ", Slon1)	
+	latitude1 = -23.698042
+	longitude1 = 133.880753
+	print('[INFO] Co-ordinates chosen-Alice Springs:', latitude1,", ",longitude1)	
 
-AirportAndDistanceList=[]
+elif input_index==2:
+	#user prompted for co-ordinates
+	Lat = DataEntryAndValidation() 
+	Lat.GetCoordinate('Lat')
+	Lon = DataEntryAndValidation()
+	Lon.GetCoordinate('Lon')
+
+	latitude1 = Lat.coordinate
+	longitude1 = Lon.coordinate
+
+	print('[INFO] Co-ordinates chosen:', latitude1,", ", longitude1)	
+
+airport_and_distance_list=[]
 
 print('Choose output units')
 terminal_menu = TerminalMenu(["miles", "kilometres"])
 choice_index = terminal_menu.show()
 if choice_index==0:
-	DistanceUnits='miles'
+	distance_units = 'miles'
+
 elif choice_index==1:
-	DistanceUnits='kilometres'
+	distance_units = 'kilometres'
 
-print('[INFO] Units chosen:', DistanceUnits )	
+print('[INFO] Units chosen:', distance_units )	
 
-for Airport in AirportList:
-	Slon2=float(Airport[3])
-	Slat2=float(Airport[2])
-	AirportAndDistance=[]
-	AirportAndDistance.insert(0, Airport[0])
-	if DistanceUnits=='miles':
-		AirportAndDistance.insert(1,float("{:.2f}".format(Haversine([Slon1,Slat1],[Slon2,Slat2]).miles)))
-	if DistanceUnits=='kilometres':
-		AirportAndDistance.insert(1,float("{:.2f}".format(Haversine([Slon1,Slat1],[Slon2,Slat2]).km)))
-	AirportAndDistance.insert(2,(Slat2))
-	AirportAndDistance.insert(3,(Slon2))
-	AirportAndDistance.insert(4,LatitudeDecimaltoDMS(Slat2))
-	AirportAndDistance.insert(5,LongitudeDecimaltoDMS(Slon2))
-	AirportAndDistanceList.append(AirportAndDistance)
+for Airport in airport_list:
+	Lon2 = float(Airport[3])
+	Lat2 = float(Airport[2])
+	airport_and_distance_attributes=[]
+	airport_and_distance_attributes.insert(0, Airport[0])
+	if distance_units=='miles':
+		airport_and_distance_attributes.insert(1,float("{:.2f}".format(Haversine([longitude1,latitude1],[Lon2,Lat2]).miles)))
+	if distance_units=='kilometres':
+		airport_and_distance_attributes.insert(1,float("{:.2f}".format(Haversine([longitude1,latitude1],[Lon2,Lat2]).km)))
+	airport_and_distance_attributes.insert(2,(Lat2))
+	airport_and_distance_attributes.insert(3,(Lon2))
+	airport_and_distance_attributes.insert(4,LatitudeDecimaltoDMS(Lat2))
+	airport_and_distance_attributes.insert(5,LongitudeDecimaltoDMS(Lon2))
+	airport_and_distance_list.append(airport_and_distance_attributes)
 
-NearestAirports = sorted(AirportAndDistanceList, key=operator.itemgetter(1))
+nearest_airports = sorted(airport_and_distance_list, key=operator.itemgetter(1))
 
 print('Enter number of airports to show')
 terminal_menu = TerminalMenu(["default (1)", "enter number to show", "All"])
 choice_index = terminal_menu.show()
 if choice_index==0:
-	NoOfResults=1
+	no_of_results = 1
 elif choice_index==1:
-	NoOfResults = int(input("number of airports to display: "))
+	no_of_results = int(input("number of airports to display: "))
 elif choice_index==2:
-	NoOfResults=len(NearestAirports)
+	no_of_results = len(nearest_airports)
 
-nearest=[]
-count=0
-for i in range(NoOfResults):
-	nearest.append(NearestAirports[count])
+nearest = []
+count = 0
+for i in range(no_of_results):
+	nearest.append(nearest_airports[count])
 	count = count+1
 
-print(NoOfResults, " nearest airports to Lat:", str(Slat1),"Lon:",str(Slon1))
+print(no_of_results, " nearest airports to Lat:", str(latitude1),"Lon:",str(longitude1))
 
-ColumnHeaders = ['Airport', 'Distance '+DistanceUnits, 'DD Lat', 'DD Lon', 'DMS Lat', 'DMS Lon']
+ColumnHeaders = ['Airport', 'Distance '+distance_units, 'DD Lat', 'DD Lon', 'DMS Lat', 'DMS Lon']
 table = columnar(nearest, ColumnHeaders, no_borders=False)
 print(table)
