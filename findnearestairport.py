@@ -10,7 +10,7 @@ purposes there ar two locations hard coded, one in England and the other in Aust
 import operator
 from getdatafromcsv import ExtractDataFromCSV
 from haversine import Haversine
-from decimaltoDMS import LatitudeDecimaltoDMS, LongitudeDecimaltoDMS
+from decimaltoDMS import DecimaltoDMS
 from columnar import columnar
 from simple_term_menu import TerminalMenu
 from coordinate_entry import DataEntryAndValidation
@@ -43,13 +43,13 @@ elif input_index==1:
 
 elif input_index==2:
 	#user prompted for co-ordinates
-	Lat = DataEntryAndValidation() 
-	Lat.GetCoordinate('Lat')
-	Lon = DataEntryAndValidation()
-	Lon.GetCoordinate('Lon')
+	latitude = DataEntryAndValidation() 
+	latitude.GetCoordinate('Lat')
+	longitude = DataEntryAndValidation()
+	longitude.GetCoordinate('Lon')
 
-	latitude1 = Lat.coordinate
-	longitude1 = Lon.coordinate
+	latitude1 = latitude.coordinate
+	longitude1 = longitude.coordinate
 
 	print('[INFO] Co-ordinates chosen:', latitude1,", ", longitude1)	
 
@@ -67,18 +67,19 @@ elif choice_index==1:
 print('[INFO] Units chosen:', distance_units )	
 
 for Airport in airport_list:
-	Lon2 = float(Airport[3])
-	Lat2 = float(Airport[2])
+	latitude2 = float(Airport[2])
+	longitude2 = float(Airport[3])
 	airport_and_distance_attributes=[]
 	airport_and_distance_attributes.insert(0, Airport[0])
 	if distance_units=='miles':
-		airport_and_distance_attributes.insert(1,float("{:.2f}".format(Haversine([longitude1,latitude1],[Lon2,Lat2]).miles)))
+		airport_and_distance_attributes.insert(1,float("{:.2f}".format(Haversine([longitude1,latitude1],[longitude2,latitude2]).miles)))
 	if distance_units=='kilometres':
-		airport_and_distance_attributes.insert(1,float("{:.2f}".format(Haversine([longitude1,latitude1],[Lon2,Lat2]).km)))
-	airport_and_distance_attributes.insert(2,(Lat2))
-	airport_and_distance_attributes.insert(3,(Lon2))
-	airport_and_distance_attributes.insert(4,LatitudeDecimaltoDMS(Lat2))
-	airport_and_distance_attributes.insert(5,LongitudeDecimaltoDMS(Lon2))
+		airport_and_distance_attributes.insert(1,float("{:.2f}".format(Haversine([longitude1,latitude1],[longitude2,latitude2]).km)))
+	airport_and_distance_attributes.insert(2,(latitude2))
+	airport_and_distance_attributes.insert(3,(longitude2))
+	airport_and_distance_attributes.insert(4,DecimaltoDMS(latitude2,0))
+	airport_and_distance_attributes.insert(5,DecimaltoDMS(longitude2,1))	
+
 	airport_and_distance_list.append(airport_and_distance_attributes)
 
 nearest_airports = sorted(airport_and_distance_list, key=operator.itemgetter(1))
